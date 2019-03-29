@@ -18,17 +18,16 @@
                 <p>{{text1}}</p>
             </div>
         </Upload>
-        <Tag v-for="item in counts" :key="item" :name="item" closable @on-close="handleClose2">{{ item }}</Tag>
-        <i-button icon="ios-add" type="dashed" size="small" @click="handleAdd">添加标签</i-button>
+        <Tag v-for="item in counts" :key="item[1]" :name="item" closable @on-close="handleClose2">{{ item[1] }}</Tag>
         <i-button @click="show">查看数据</i-button>
         <div v-for="(buttons, index) in buttonss" :key="buttons" v-show="!visible[index]" style="display:flex;align-items:baseline;height:25px">
             <span>{{buttons.title}}</span>
             <div>
-                <i-button v-for="item in buttons.buttons" :key="item" type="text" @click="handleAddTag(item)">{{item}}
+                <i-button v-for="item in buttons.buttons" :key="item" type="text" @click="handleAddTag(item, index)">{{item}}
                 </i-button>
             </div>
         </div>
-        <i-table :columns="columns10" :data="data10" width="500" height="200" border></i-table>
+        <i-table :columns="columns10" :data="data10" width="500" height="200"></i-table>
     </div>
 
     <script>
@@ -55,20 +54,24 @@
                     }
                 ],
                 data10: [],
-                counts: ["三个月未进厂", "女性", "昂克赛拉"],
+                counts: [],// [[0, "三个月未进厂"], [1, "女性"], [2, "昂克赛拉"]],\
                 buttonss: [{
                     title: "购车时间",
-                    buttons: ["111", "222", "3333"]
+                    buttons: ["111", "222", "3333",  "三个月未进厂"]
                 }, {
                     title: "性别",
                     buttons: ["男", "女"]
+                },
+                {
+                    title: "车系",
+                    buttons: ["昂克赛拉", "CX5", "CX3"]
                 }]
             },
             methods: {
-                handleAddTag: function (res) {
-                    console.log(res);
-                    this.counts.push(res);
-                    this.visible = false;
+                handleAddTag: function (tag, index) {
+                    console.log(tag, " ", index);
+                    this.counts.push([index, tag]);
+                    this.visible[index] = true;
                 },
                 show: function () {
                     axios.get('./get-table').then(res => this.data10 = res.data)
@@ -77,17 +80,12 @@
                     console.log(response);
                     this.text1 = "文件上传成功";
                 },
-                handleAdd() {
-                    if (this.counts.length) {
-                        this.counts.push(this.counts[this.counts.length - 1] + 1);
-                    } else {
-                        this.counts.push(0);
-                    }
-                },
-                handleClose2(event, name) {
-                    const index = this.counts.indexOf(name);
+                handleClose2(event, tag) {
+                    console.log(tag);
+                    const index = this.counts.indexOf(tag);
                     this.counts.splice(index, 1);
-                    this.visible = true;
+
+                    this.visible[tag[0]] = false;
                 }
             }
         })
