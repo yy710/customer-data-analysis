@@ -70,7 +70,7 @@ module.exports = function (express) {
 
     router.get('/get-table', function(req, res, next){
         const db = req.data.db;
-        db.collection('xwya').find().limit(10).toArray((err,doc)=>res.json(doc));
+        db.collection('xwya').find().toArray((err,doc)=>res.json(doc));
     });
 
     return router;

@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>iview example</title>
+    <title>云南行无忧客户数据分析</title>
     <link rel="stylesheet" type="text/css" href="./styles/iview.css">
     <script type="text/javascript" src="./vue.min.js"></script>
     <script type="text/javascript" src="./iview.min.js"></script>
@@ -26,14 +26,19 @@
                 <i-button v-for="item in buttons.buttons" :key="item" type="text" @click="handleAddTag(item, index)">{{item}}
                 </i-button>
             </div>
+          <!-- <Divider dashed /> -->
         </div>
         <i-table :columns="columns10" :data="data10" width="500" height="200"></i-table>
+        <Page :total="totalColumns" @on-change="handlePageChange"></Page>
     </div>
 
     <script>
+        let totalColumns = 0;
+
         new Vue({
             el: '#app',
             data: {
+                totalColumns: 0,
                 visible: [],
                 text1: "请点击或把文件拖到这里。。。",
                 columns10: [{
@@ -68,13 +73,23 @@
                 }]
             },
             methods: {
+                handlePageChange: function(page){
+                    console.log(page)
+                    let c = totalColumns.concat();
+                    this.data10 = c.splice((page-1)*10, 10);
+                },
                 handleAddTag: function (tag, index) {
                     console.log(tag, " ", index);
                     this.counts.push([index, tag]);
                     this.visible[index] = true;
                 },
                 show: function () {
-                    axios.get('./get-table').then(res => this.data10 = res.data)
+                    axios.get('./get-table').then(res => {
+                        //console.log(res.data.length);
+                        totalColumns = res.data.concat();
+                        this.totalColumns = totalColumns.length;
+                        this.data10 = res.data.splice(0,10);
+                    })
                 },
                 uploadSuccess: function (response, file, fileList) {
                     console.log(response);
