@@ -68,9 +68,94 @@ module.exports = function (express) {
         });
     });
 
-    router.get('/get-table', function(req, res, next){
+    router.get('/get-table', function (req, res, next) {
+        const tags = Array.isArray(req.query.tags) ? req.query.tags : [];
+        console.log("origin: ", tags);
+        //if (tags === []) return;
+
+        let condition_json = tags.map(element => {
+            let e = JSON.parse(element);
+            let _j = {};
+            switch (e[0]) {
+                case 0:
+                    switch (e[1]) {
+                        case "0-5000":
+                            _j = {
+                                "行驶里程": {
+                                    $lte: 5000
+                                }
+                            };
+                            return {
+                                $match: _j
+                            };
+                            break;
+                        case "5000-10000":
+                            _j = {
+                                $and: [{
+                                    "行驶里程": {
+                                        $gt: 5000
+                                    }
+                                }, {
+                                    "行驶里程": {
+                                        $lte: 10000
+                                    }
+                                }]
+                            };
+                            return {
+                                $match: _j
+                            };
+                            break;
+                        case "10000-50000":
+                            _j = {
+                                $and: [{
+                                    "行驶里程": {
+                                        $gt: 10000
+                                    }
+                                }, {
+                                    "行驶里程": {
+                                        $lte: 50000
+                                    }
+                                }]
+                            };
+                            return {
+                                $match: _j
+                            };
+                            break;
+                        case ">50000":
+                            _j = {
+                                "行驶里程": {
+                                    $gt: 50000
+                                }
+                            };
+                            return {
+                                $match: _j
+                            };
+                            break;
+                    }
+                    break;
+                case 1:
+                    _j = {
+                        "车系": e[1]
+                    };
+                    return {
+                        $match: _j
+                    };
+                    break;
+                case 2:
+                    _j = {
+                        "维修类型": e[1]
+                    };
+                    return {
+                        $match: _j
+                    };
+                    break;
+            }
+
+        });
+        console.log("new: ", condition_json);
+
         const db = req.data.db;
-        db.collection('xwya').find().toArray((err,doc)=>res.json(doc));
+        db.collection('xwya').aggregate(condition_json).toArray((err, doc) => res.json(doc || []));
     });
 
     return router;

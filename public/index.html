@@ -18,17 +18,19 @@
                 <p>{{text1}}</p>
             </div>
         </Upload>
-        <Tag v-for="item in counts" :key="item[1]" :name="item" closable @on-close="handleClose2">{{ item[1] }}</Tag>
+        <Tag v-for="item in tags" :key="item[1]" :name="item" closable @on-close="handleClose2">{{ item[1] }}</Tag>
         <i-button @click="show">查看数据</i-button>
-        <div v-for="(buttons, index) in buttonss" :key="buttons" v-show="!visible[index]" style="display:flex;align-items:baseline;height:25px">
+        <div v-for="(buttons, index) in buttonss" :key="buttons" v-show="!visible[index]"
+            style="display:flex;align-items:baseline;height:25px">
             <span>{{buttons.title}}</span>
             <div>
-                <i-button v-for="item in buttons.buttons" :key="item" type="text" @click="handleAddTag(item, index)">{{item}}
+                <i-button v-for="item in buttons.buttons" :key="item" type="text" @click="handleAddTag(item, index)">
+                    {{item}}
                 </i-button>
             </div>
-          <!-- <Divider dashed /> -->
+            <!-- <Divider dashed /> -->
         </div>
-        <i-table :columns="columns10" :data="data10" width="500" height="200"></i-table>
+        <i-table :columns="columns10" :data="data10" width="600" height="300"></i-table>
         <Page :total="totalColumns" @on-change="handlePageChange"></Page>
     </div>
 
@@ -50,45 +52,66 @@
                     {
                         title: '用户手机',
                         key: '用户手机',
-                        width: 200
+                        width: 150
                     },
                     {
                         title: '车牌号',
                         key: '车牌号',
-                        width: 300
+                        width: 100
+                    },
+                    {
+                        title: '维修类型',
+                        key: '维修类型',
+                        width: 150
+                    },
+                    {
+                        title: '车系',
+                        key: '车系',
+                        width: 100
+                    },
+                    {
+                        title: '行驶里程',
+                        key: '行驶里程',
+                        width: 100
                     }
                 ],
                 data10: [],
-                counts: [],// [[0, "三个月未进厂"], [1, "女性"], [2, "昂克赛拉"]],\
+                tags: [], // [[0, "三个月未进厂"], [1, "女性"], [2, "昂克赛拉"]],\
                 buttonss: [{
-                    title: "购车时间",
-                    buttons: ["111", "222", "3333",  "三个月未进厂"]
-                }, {
-                    title: "性别",
-                    buttons: ["男", "女"]
-                },
-                {
-                    title: "车系",
-                    buttons: ["昂克赛拉", "CX5", "CX3"]
-                }]
+                        title: "行驶里程(公里)",
+                        buttons: ["0-5000", "5000-10000", "10000-50000", ">50000"]
+                    }, {
+                        title: "车系",
+                        buttons: ["CX-5", "Axela", "马自达2"]
+                    },
+                    {
+                        title: "维修类型",
+                        buttons: ["索赔", "保养", "首保"]
+                    }
+                ]
             },
             methods: {
-                handlePageChange: function(page){
+                handlePageChange: function (page) {
                     console.log(page)
                     let c = totalColumns.concat();
-                    this.data10 = c.splice((page-1)*10, 10);
+                    this.data10 = c.splice((page - 1) * 10, 10);
                 },
                 handleAddTag: function (tag, index) {
                     console.log(tag, " ", index);
-                    this.counts.push([index, tag]);
+                    this.tags.push([index, tag]);
                     this.visible[index] = true;
+                    this.show();
                 },
                 show: function () {
-                    axios.get('./get-table').then(res => {
+                    axios.get('./get-table', {
+                        params: {
+                            tags: this.tags
+                        }
+                    }).then(res => {
                         //console.log(res.data.length);
                         totalColumns = res.data.concat();
                         this.totalColumns = totalColumns.length;
-                        this.data10 = res.data.splice(0,10);
+                        this.data10 = res.data.splice(0, 10);
                     })
                 },
                 uploadSuccess: function (response, file, fileList) {
@@ -97,10 +120,10 @@
                 },
                 handleClose2(event, tag) {
                     console.log(tag);
-                    const index = this.counts.indexOf(tag);
-                    this.counts.splice(index, 1);
-
+                    const index = this.tags.indexOf(tag);
+                    this.tags.splice(index, 1);
                     this.visible[tag[0]] = false;
+                    this.show();
                 }
             }
         })
