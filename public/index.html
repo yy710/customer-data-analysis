@@ -10,7 +10,7 @@
     <script type="text/javascript" src="./axios.min.js"></script>
 </head>
 
-<body>
+<body style="padding:10px;margin:10px">
     <div id="app">
         <Upload multiple type="drag" action="./upload" name="excel" :on-success="uploadSuccess">
             <div style="padding: 20px 0">
@@ -21,16 +21,15 @@
         <Tag v-for="item in tags" :key="item[1]" :name="item" closable @on-close="handleClose2">{{ item[1] }}</Tag>
         <i-button @click="show">查看数据</i-button>
         <div v-for="(buttons, index) in buttonss" :key="buttons" v-show="!visible[index]"
-            style="display:flex;align-items:baseline;height:25px">
-            <span>{{buttons.title}}</span>
+            style="display:flex;align-items:baseline;height:25px;">
+            <span style="font-weight: bolder">{{buttons.title}}：</span>
             <div>
-                <i-button v-for="item in buttons.buttons" :key="item" type="text" @click="handleAddTag(item, index)">
-                    {{item}}
-                </i-button>
+                <i-button v-for="item in buttons.buttons" :key="item" type="text" @click="handleAddTag(item, index)">{{item}}</i-button>
             </div>
-            <!-- <Divider dashed /> -->
         </div>
-        <i-table :columns="columns10" :data="data10" width="600" height="300"></i-table>
+        <div style="height:10px"></div>
+        <i-table :columns="columns10" :data="data10" width="100%" height="300"></i-table>
+        <div style="height:10px"></div>
         <Page :total="totalColumns" @on-change="handlePageChange"></Page>
     </div>
 
@@ -73,6 +72,16 @@
                         title: '行驶里程',
                         key: '行驶里程',
                         width: 100
+                    },
+                    {
+                        title: '实际应付金额',
+                        key: '实际应付金额',
+                        width: 150
+                    },
+                    {
+                        title: '结算属性',
+                        key: '结算属性',
+                        width: 150
                     }
                 ],
                 data10: [],
@@ -87,6 +96,10 @@
                     {
                         title: "维修类型",
                         buttons: ["索赔", "保养", "首保"]
+                    },
+                    {
+                        title: "结算属性",
+                        buttons: ["索赔结算", "客户自费", "保险公司付费"]
                     }
                 ]
             },
@@ -132,7 +145,7 @@
     <style>
         .aaa {
             padding: 0px;
-            margin: 0px;
+            margin: 20px;
             height: 25px;
             width: 500px;
             border: 1px;

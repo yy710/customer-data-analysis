@@ -149,6 +149,14 @@ module.exports = function (express) {
                         $match: _j
                     };
                     break;
+                    case 3:
+                    _j = {
+                        "结算属性": e[1]
+                    };
+                    return {
+                        $match: _j
+                    };
+                    break;
             }
 
         });
