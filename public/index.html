@@ -12,12 +12,20 @@
 
 <body style="padding:10px;margin:10px">
     <div id="app">
+        <div style="display: flex;width: 800px">
         <Upload multiple type="drag" action="./upload" name="excel" :on-success="uploadSuccess">
             <div style="padding: 20px 0">
                 <Icon type="ios-cloud-upload" size="52" style="color: #3399ff"></Icon>
                 <p>{{text1}}</p>
             </div>
         </Upload>
+        <Upload multiple type="drag" action="./upload" name="excel2" :on-success="uploadSuccess2">
+            <div style="padding: 20px 0">
+                <Icon type="ios-cloud-upload" size="52" style="color: #3399ff"></Icon>
+                <p>{{text2}}</p>
+            </div>
+        </Upload>
+        </div>
         <Tag v-for="item in tags" :key="item[1]" :name="item" closable @on-close="handleClose2">{{ item[1] }}</Tag>
         <i-button @click="show">查看数据</i-button>
         <div v-for="(buttons, index) in buttonss" :key="buttons" v-show="!visible[index]"
@@ -41,7 +49,8 @@
             data: {
                 totalColumns: 0,
                 visible: [],
-                text1: "请点击或把文件拖到这里。。。",
+                text1: "请点击或把<<维修进场excel报表>>文件拖到这里。。。",
+                text2: "请点击或把<<销售基盘excel报表>>文件拖到这里。。。",
                 columns10: [{
                         title: '用户姓名',
                         key: '用户姓名',
@@ -128,6 +137,10 @@
                     })
                 },
                 uploadSuccess: function (response, file, fileList) {
+                    console.log(response);
+                    this.text1 = "文件上传成功";
+                },
+                uploadSuccess2: function (response, file, fileList) {
                     console.log(response);
                     this.text1 = "文件上传成功";
                 },
