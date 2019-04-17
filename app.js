@@ -6,7 +6,7 @@ const routerXWY = require("./xwy/index.js");
 let http = require('http');
 //let https = require('https');
 let fs = require('fs');
-const cors = require('cors');
+//const cors = require('cors');
 
 const app = express();
 //app.use(cors());
