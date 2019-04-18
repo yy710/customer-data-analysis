@@ -27,13 +27,36 @@ module.exports = function (express) {
         //table.set();
 
         collection.find({
-            $or: [
-                {"用户姓名": {$regex: text}},
-                {"车牌号": {$regex: text}},
-                {"用户手机": {$regex: text}},
-                {"结算属性": {$regex: text}},
-                {"车系": {$regex: text}},
-                {"维修类型": {$regex: text}}
+            $or: [{
+                    "用户姓名": {
+                        $regex: text
+                    }
+                },
+                {
+                    "车牌号": {
+                        $regex: text
+                    }
+                },
+                {
+                    "用户手机": {
+                        $regex: text
+                    }
+                },
+                {
+                    "结算属性": {
+                        $regex: text
+                    }
+                },
+                {
+                    "车系": {
+                        $regex: text
+                    }
+                },
+                {
+                    "维修类型": {
+                        $regex: text
+                    }
+                }
             ]
         }).toArray().then(docs => res.json(docs));
     })
@@ -90,6 +113,7 @@ module.exports = function (express) {
     router.get('/get-table', function (req, res, next) {
         const tags = Array.isArray(req.query.tags) ? req.query.tags : [];
         console.log("origin: ", tags);
+        const regExp1 = /^[0-9]{*}/;
         //if (tags === []) return;
 
         let condition_json = tags.map(element => {
@@ -97,7 +121,23 @@ module.exports = function (express) {
             let _j = {};
             switch (e[0]) {
                 case 0:
-                    switch (e[1]) {
+                    const start = e[1].match(/^[0-9]*/);
+                    const end = e[1].match(/[0-9]*$/);
+                    _j = {
+                        $and: [{
+                            "行驶里程": {
+                                $gt: parseInt(start)
+                            }
+                        }, {
+                            "行驶里程": {
+                                $lte: parseInt(end)
+                            }
+                        }]
+                    };
+                    return {
+                        $match: _j
+                    };
+                    /* switch (e[1]) {
                         case "0-5000":
                             _j = {
                                 "行驶里程": {
@@ -150,7 +190,7 @@ module.exports = function (express) {
                                 $match: _j
                             };
                             break;
-                    }
+                    } */
                     break;
                 case 1:
                     _j = {

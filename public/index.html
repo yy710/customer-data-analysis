@@ -37,9 +37,21 @@
                 <i-button v-for="item in buttons.buttons" :key="item" type="text" @click="handleAddTag(item, index)">
                     {{item}}</i-button>
             </div>
-            <div>
+            <div v-if="index != 0">
                 <i-input v-model="inputTag[index]" size="small" icon="md-add-circle" placeholder="自定义搜索"
                     style="width: 100px" @on-click="addInput(inputTag[index], index)" />
+            </div>
+            <div v-if="index == 0">
+                <span>
+                    <i-input v-model="start" size="small" style="width: 50px" placeolder="0" />
+                </span>
+                <span>-</span>
+                <span>
+                    <i-input v-model="end" size="small" style="width: 50px" placeolder="0" />
+                </span>
+                <span>
+                    <Icon type="md-add-circle" @click="handleDistance(index)" />
+                </span>
             </div>
         </div>
         <div style="height:10px"></div>
@@ -59,6 +71,8 @@
         new Vue({
             el: '#app',
             data: {
+                start: 0,
+                end: 0,
                 searchText: '',
                 inputTag: [],
                 totalColumns: 0,
@@ -111,7 +125,7 @@
                 tags: [], // [[0, "三个月未进厂"], [1, "女性"], [2, "昂克赛拉"]],\
                 buttonss: [{
                         title: "行驶里程(公里)",
-                        buttons: ["0-5000", "5000-10000", "10000-50000", ">50000"]
+                        buttons: ["0-5000", "5000-10000", "10000-50000", "50000-100000"]
                     }, {
                         title: "车系",
                         buttons: ["CX-5", "Axela", "马自达2"]
@@ -127,6 +141,10 @@
                 ]
             },
             methods: {
+                handleDistance: function (index) {
+                    console.log(this.start, "distance!", this.end);
+                    this.handleAddTag(this.start+'-'+this.end, index);
+                },
                 textSearch: function (text) {
                     console.log(text);
                     axios.get('./fuzzy-query', {
