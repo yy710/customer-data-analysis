@@ -48,9 +48,9 @@
                 @on-click="textSearch(searchText)" />
         </div>
         <div style="height:10px"></div>
-        <i-table :columns="columns10" :data="data10" width="100%" height="300"></i-table>
+        <i-table :columns="columns10" :data="data10" width="100%" height="600"></i-table>
         <div style="height:10px"></div>
-        <Page :total="totalColumns" @on-change="handlePageChange"></Page>
+        <Page :total="totalColumns" page-size="20" @on-change="handlePageChange"></Page>
     </div>
 
     <script>
@@ -129,6 +129,16 @@
             methods: {
                 textSearch: function (text) {
                     console.log(text);
+                    axios.get('./fuzzy-query', {
+                        params: {
+                            text: text
+                        }
+                    }).then(res => {
+                        //console.log(res.data);
+                        totalColumns = res.data.concat();
+                        this.totalColumns = totalColumns.length;
+                        this.data10 = res.data.splice(0, 20);
+                    });
                 },
                 addInput: function (tag, index) {
                     console.log("click input! ", tag);
@@ -147,7 +157,7 @@
                 handlePageChange: function (page) {
                     console.log(page)
                     let c = totalColumns.concat();
-                    this.data10 = c.splice((page - 1) * 10, 10);
+                    this.data10 = c.splice((page - 1) * 20, 20);
                 },
                 handleAddTag: function (tag, index) {
                     console.log(tag, " ", index);
@@ -164,8 +174,8 @@
                         //console.log(res.data.length);
                         totalColumns = res.data.concat();
                         this.totalColumns = totalColumns.length;
-                        this.data10 = res.data.splice(0, 10);
-                    })
+                        this.data10 = res.data.splice(0, 20);
+                    });
                 },
                 uploadSuccess: function (response, file, fileList) {
                     console.log(response);

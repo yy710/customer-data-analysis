@@ -19,6 +19,25 @@ module.exports = function (express) {
     //router.use(express.static(__dirname + '/public'));
     router.use(express.static('public')); // notic path!
 
+
+    router.use('/fuzzy-query', function (req, res, next) {
+        const text = req.query.text;
+        const collection = req.data.db.collection("xwya");
+        let table = new Map();
+        //table.set();
+
+        collection.find({
+            $or: [
+                {"用户姓名": {$regex: text}},
+                {"车牌号": {$regex: text}},
+                {"用户手机": {$regex: text}},
+                {"结算属性": {$regex: text}},
+                {"车系": {$regex: text}},
+                {"维修类型": {$regex: text}}
+            ]
+        }).toArray().then(docs => res.json(docs));
+    })
+
     router.post('/upload', (req, res, next) => {
         res.json({
             msg: "request ok!"
@@ -149,7 +168,7 @@ module.exports = function (express) {
                         $match: _j
                     };
                     break;
-                    case 3:
+                case 3:
                     _j = {
                         "结算属性": e[1]
                     };
