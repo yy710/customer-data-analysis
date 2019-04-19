@@ -60,9 +60,9 @@
                 @on-click="textSearch(searchText)" />
         </div>
         <div style="height:10px"></div>
-        <i-table :columns="columns10" :data="data10" width="100%" height="600"></i-table>
+        <i-table :columns="columns10" :data="data10" width="100%" height="350"></i-table>
         <div style="height:10px"></div>
-        <Page :total="totalColumns" page-size="20" @on-change="handlePageChange"></Page>
+        <Page :total="totalColumns" page-size="10" @on-change="handlePageChange"></Page>
     </div>
 
     <script>
@@ -88,7 +88,7 @@
                     {
                         title: '用户手机',
                         key: '用户手机',
-                        width: 150
+                        width: 120
                     },
                     {
                         title: '车牌号',
@@ -103,7 +103,17 @@
                     {
                         title: '车系',
                         key: '车系',
-                        width: 100
+                        width: 80
+                    },
+                    {
+                        title: 'VIN',
+                        key: 'VIN',
+                        width: 180
+                    },
+                    {
+                        title: 'AIC',
+                        key: 'AIC',
+                        width: 300
                     },
                     {
                         title: '行驶里程',
@@ -113,7 +123,7 @@
                     {
                         title: '实际应付金额',
                         key: '实际应付金额',
-                        width: 150
+                        width: 120
                     },
                     {
                         title: '结算属性',
@@ -147,6 +157,7 @@
                 },
                 textSearch: function (text) {
                     console.log(text);
+                    //this.tags = [];
                     axios.get('./fuzzy-query', {
                         params: {
                             text: text
@@ -155,7 +166,7 @@
                         //console.log(res.data);
                         totalColumns = res.data.concat();
                         this.totalColumns = totalColumns.length;
-                        this.data10 = res.data.splice(0, 20);
+                        this.data10 = res.data.splice(0, 10);
                     });
                 },
                 addInput: function (tag, index) {
@@ -175,7 +186,7 @@
                 handlePageChange: function (page) {
                     console.log(page)
                     let c = totalColumns.concat();
-                    this.data10 = c.splice((page - 1) * 20, 20);
+                    this.data10 = c.splice((page - 1) * 10, 10);
                 },
                 handleAddTag: function (tag, index) {
                     console.log(tag, " ", index);
@@ -192,7 +203,7 @@
                         //console.log(res.data.length);
                         totalColumns = res.data.concat();
                         this.totalColumns = totalColumns.length;
-                        this.data10 = res.data.splice(0, 20);
+                        this.data10 = res.data.splice(0, 10);
                     });
                 },
                 uploadSuccess: function (response, file, fileList) {

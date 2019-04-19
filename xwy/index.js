@@ -53,6 +53,16 @@ module.exports = function (express) {
                     }
                 },
                 {
+                    "VIN": {
+                        $regex: text
+                    }
+                },
+                {
+                    "AIC": {
+                        $regex: text
+                    }
+                },
+                {
                     "维修类型": {
                         $regex: text
                     }
@@ -126,11 +136,11 @@ module.exports = function (express) {
                     _j = {
                         $and: [{
                             "行驶里程": {
-                                $gt: parseInt(start)
+                                $gt: parseInt(start) || 0
                             }
                         }, {
                             "行驶里程": {
-                                $lte: parseInt(end)
+                                $lte: parseInt(end) || 10000000
                             }
                         }]
                     };
